@@ -25,7 +25,7 @@
 
 | 词汇名称 | 词汇含义 | 备注 |
 | --- | --- | --- |
-| ServiceImpl | Service Implementation | 对Service接口的具体实现 |
+| Impl | Implementation | 对业务逻辑层接口的具体实现 |
 | oss | Object Storage Service | 对象存储服务 |
 
 ### **1.3 参考资料**
@@ -363,6 +363,8 @@
 ### **5.4.2 接口规范**
 
 提供的服务（供接口）
+
+可以参考JPA Repository接口的规范，以下为UserRepository的例子
 
 | 名称 | 语法 | 前置条件 | 后置条件 |
 | --- | --- | --- | --- |
