@@ -10,9 +10,10 @@
 
 | 修改人员 | 日期 | 修改原因 | 版本号 |
 | --- | --- | --- | --- |
-| 刘存玺 | 2024-4-17 | 根据已经开发的系统完善文档5.1 5.2 |  |
-| 史创屹 | 2024-4-17 | 根据已经开发的系统完善文档1到4 |  |
-| 杨枫 | 2024-4-17 | 根据已经开发的系统完善文档5.3及之后所有的内容 |  |
+| 刘存玺 | 2024-4-17 | 根据已经开发的系统完善文档5.1 5.2 | v0.1 |
+| 史创屹 | 2024-4-17 | 根据已经开发的系统完善文档1到4 | v0.2 |
+| 杨枫 | 2024-4-17 | 根据已经开发的系统完善文档5.3及之后所有的内容 | v1.0 |
+| 刘存玺 | 2024-6-1 | 根据已经开发的系统完善文档的开发包图 | v2.0 |
 
 ## **1. 引言**
 
@@ -31,6 +32,8 @@
 ### **1.3 参考资料**
 
 - 丁二玉 刘钦《软件工程与计算 卷2 软件开发的技术基础 》
+- 用例文档
+- 需求规格说明书
 
 ## **2. 产品概述**
 
@@ -38,16 +41,21 @@
 
 ## **3. 逻辑视角**
 
-- 选用分层体系结构风格，将系统分为3层（展示层、业务层、数据层）。
-- 软件体系结构逻辑设计方案
+- Bluewhale网购平台系统采用浏览器和服务器架构模式，前端的展示层通过HTTP REST API与后端进行通信。后端的开发选用分层体系结构风格，包括接口层、业务逻辑层、数据访问层。整个系统的逻辑视角分为3层（展示层、业务逻辑层、数据访问层）。
 
-![屏幕截图 2024-04-17 152707.png](drawio/3-1.drawio.svg)
+- **分层体系结构的逻辑视角图**
+
+    ![分层体系结构的逻辑视角图.drawio](drawio/分层体系结构的逻辑视角图.drawio.svg)
+
+- **软件体系结构逻辑设计方案**
+
+![屏幕截图 2024-04-17 152707.png](drawio/分层体系结构的逻辑设计方案图.drawio.svg)
 
 ## 组合视角
 
 ### **4.1 开发包图**
 
-- 表1 开发包设计
+- 开发包设计
 
 | 开发(物理)包 | 依赖的其他开发包 |
 | --- | --- |
@@ -97,13 +105,13 @@
 | TokenUtil | / |
 | enums | / |
 | exception | / |
-- 客户端开发包图
+- **客户端开发包图**
 
-![屏幕截图 2024-04-17 163703.png](drawio/4.1-1.drawio.svg)
+![屏幕截图 2024-04-17 163703.png](drawio/客户端开发包图.drawio.svg)
 
-- 服务端开发包图
+- **服务端开发包图**
 
-![屏幕截图 2024-04-17 170443.png](drawio/4.1-2.drawio.svg)
+![屏幕截图 2024-04-17 170443.png](drawio/服务端开发包图.drawio.svg)
 
 **4.2 运行时进程**
 
@@ -113,33 +121,36 @@
 
 ### **4.3 物理部署**
 
-- 部署图
+在客户端，用户只需要和浏览器进行交互。本系统支持常见浏览器以及操作系统。
 
-![屏幕截图 2024-04-17 172333.png](drawio/4.3-1.drawio.svg)
+在服务端节点上需要通过Docker拉取Node.js的镜像、Maven镜像以及MySQL server镜像，具体版本要求已在下图中展示。前端通过npm部署到Node.js镜像中，后端通过Maven构建并部署到对应镜像中。
+
+- **部署图**
+
+![屏幕截图 2024-04-17 172333.png](drawio/部署图.drawio.svg)
 
 ## **接口视角**
 
 ### **5.1 模块的职责**
 
-- 模块视图
+- **模块视图**
 
-![5.1-1.drawio.svg](drawio/5.1-1.drawio.svg)
+![5.1-1.drawio.svg](drawio/模块视图.drawio.svg)
 
-- 表2 客户端各层职责
+- 客户端各层职责
 
 | 层 | 职责 |
 | --- | --- |
 | 用户界面层 | 基于web的网购商城客户端界面 |
-| 业务逻辑层 | 对网络模块接受的数据与用户界面的输入进行响应并进行业务逻辑处理 |
-| 客户端网络模块 | 发送网络请求 |
-- 表3 服务端各层职责
+| 客户端网络模块 | 向服务器发送HTTP REST网络请求 |
+- 服务端各层职责
 
 | 层 | 职责 |
 | --- | --- |
-| 接口层Controller | 负责响应客户端传来的网络请求 |
+| 接口层Controller | 负责响应客户端传来的HTTP REST网络请求 |
 | 业务逻辑层Service/ServiceImpl | 负责接收并处理来自接口层的请求 |
 | 数据接口层Repository | 负责数据的持久化和数据访问接口 |
-- 表4 层之间调用接口，下表为一个例子
+- 层之间调用接口，下表为一个例子
 
 | 接口 | 服务调用方 | 服务提供方 |
 | --- | --- | --- |
@@ -150,43 +161,40 @@
 
 ### **5.2 用户界面层的分解**
 
-根据需求，系统存在11个用户界面：
+根据需求，系统存在14个用户界面
 
-- 登录界面
-- 注册界面
-- 用户信息界面
-- 商店列表界面
-- 商店详情界面
-- 商品详情界面
-- 订单创建界面
-- 支付界面
-- 订单列表界面
-- 评论界面
-- 创建商店界面
+界面的跳转如下图所示：
 
-这些界面的跳转如下图所示：
+![5.2.1.drawio.svg](drawio/页面跳转图.drawio.svg)
 
-![5.2.1.drawio.svg](drawio/5.2-1.drawio.svg)
+用户界面层的开发包图
+
+![展示层开发包图.drawio](images/展示层开发包图.drawio-17178167374441.svg)
 
 ### **5.2.1 职责**
 
+以storeUI的职责为例
+
 | 模块 | 职责 |
 | --- | --- |
-| 用户界面层 | 负责界面的显示和界面的跳转，以及与用户的交互 |
+| views/store/StoreDetail.vue | 展示商店的详情信息以及商品列表，包括相关逻辑的处理 |
+| views/store/CreateStore.vue | 创建商店的用户界面 |
 
 ### **5.2.2 接口规范**
 
-用户界面层模块的接口规范如下表所示。
+以storeAPI的职责为例(api/store.ts)
 
-| 名称 | 语法 | 前置条件 | 后置条件 |
-| --- | --- | --- | --- |
-| 用户界面层 | init(args:String[]) | 无 | 显示Frame |
+| 名称 | 语法 | 备注 |
+| --- | --- | --- |
+| 请求商品信息列表 | reqStoreInfoList()                                           | 返回所有商店的信息 |
+| 请求某商店信息   | reqStoreInfo({storeId:number})                               |                    |
+| 请求创建商店     | reqStoreCreate(storeInfo:{name: string, description: string}) |                    |
 
-用户界面层需要的服务接口如下表所示。
+需要的服务接口如下表所示
 
 | 服务名 | 服务 |
 | --- | --- |
-| service.*Service | 每个节目对应的业务逻辑接口 |
+| controller.StoreController | 商店相关请求的接口层接口类 |
 
 ### **5.3 业务逻辑层的分解**
 
@@ -380,327 +388,32 @@
 
 系统的PO类就是对应的相关的实体类。在此只做简单的介绍
 
-- UserPO类包含用户的id、名称、电话号码、密码、创建时间、所属商店id、地址、角色。定义如下：
+- UserPO类包含用户的id、名称、电话号码、密码、创建时间、所属商店id、地址、角色。
   
-    ```java
-    public class User {
-    
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Id
-        @Column(name = "id")
-        private Integer id;
-    
-        @Basic
-        @Column(name = "name")
-        private String name;
-    
-        @Basic
-        @Column(name = "phone")
-        private String phone;
-    
-        @Basic
-        @Column(name = "password")
-        private String password;
-    
-        //必须注意，在Java中用驼峰，在MySQL字段中用连字符_
-        @Basic
-        @Column(name = "create_time")
-        private Date createTime;
-    
-        @Basic
-        @Column(name = "store_id")
-        private Integer storeId;
-    
-        @Basic
-        @Column(name = "address")
-        private String address;
-    
-        @Basic
-        @Column(name = "role")
-        @Enumerated(EnumType.STRING)
-        private RoleEnum role;
-    
-        public UserVO toVO(){
-            UserVO userVO=new UserVO();
-            userVO.setId(this.id);
-            userVO.setAddress(this.address);
-            userVO.setName(this.name);
-            userVO.setRole(this.role);
-            userVO.setStoreId(this.storeId);
-            userVO.setPhone(this.phone);
-            userVO.setPassword(this.password);
-            userVO.setCreateTime(this.createTime);
-            return userVO;
-        }
-    }
-    ```
-    
-- StorePO类包含商店的id、名称、描述、评分。定义如下：
+- StorePO类包含商店的id、名称、描述、评分。
   
-    ```java
-    public class Store {
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Id
-        @Column(name = "id")
-        private Integer id;
-    
-        @Basic
-        @Column(name = "name")
-        private String name;
-    
-        @Basic
-        @Column(name = "description")
-        private String description;
-    
-        @Basic
-        @Column(name = "rating")
-        private float rating;
-    
-        public StoreVO toVO(){
-            StoreVO storeVO = new StoreVO();
-            storeVO.setId(this.id);
-            storeVO.setName(this.name);
-            storeVO.setDescription(this.description);
-            storeVO.setRating(this.rating);
-    
-            return storeVO;
-        }
-    }
-    ```
-    
-- OrderPO类包含订单的id、商品id、用户id、状态、配送、商店id、优惠券、价格、数量、创建时间、发货时间、签收时间。定义如下：
+- OrderPO类包含订单的id、商品id、用户id、状态、配送、商店id、优惠券、价格、数量、创建时间、发货时间、签收时间。
   
-    ```java
-    public class Order {
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Id
-        @Column(name = "id")
-        private Integer id;
-    
-        @Basic
-        @Column(name = "item_id")
-        private Integer itemId;
-    
-        @Basic
-        @Column(name = "user_id")
-        private Integer userId;
-    
-        @Basic
-        @Column(name = "status")
-        private OrderStatus status;
-    
-        @Basic
-        @Column(name = "delivery")
-        private String delivery;
-    
-        @Basic
-        @Column(name = "store_id")
-        private Integer storeId;
-    
-        @Basic
-        @Column(name = "coupon")
-        private Integer coupon;
-        // TODO: 2021/6/1 优惠券
-    
-        @Basic
-        @Column(name = "price")
-        private Float price;
-    
-        @Basic
-        @Column(name = "quantity")
-        private Integer quantity;
-    
-        @Basic
-        @Column(name = "create_time")
-        private Date createTime;
-    
-        @Basic
-        @Column(name = "send_time")
-        private Date sendTime;
-    
-        @Basic
-        @Column(name = "receive_time")
-        private Date receiveTime;
-    
-        public OrderVO toVO(){
-            OrderVO orderVO = new OrderVO();
-            orderVO.setId(this.id);
-            orderVO.setItemId(this.itemId);
-            orderVO.setUserId(this.userId);
-            orderVO.setStatus(this.status);
-            orderVO.setDelivery(this.delivery);
-            orderVO.setStoreId(this.storeId);
-            orderVO.setPrice(this.price);
-            orderVO.setQuantity(this.quantity);
-            orderVO.setCreateTime(this.createTime);
-            orderVO.setSendTime(this.sendTime);
-            orderVO.setReceiveTime(this.receiveTime);
-            return orderVO;
-        }
-    }
-    ```
-    
-- ItemPO类包含了商品的id、名称、描述、价格、评分、所属类别、所属商店id、库存。定义如下
+- ItemPO类包含了商品的id、名称、描述、价格、评分、所属类别、所属商店id、库存。
   
-    ```java
-    public class Item {
-    
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Id
-        @Column(name = "id")
-        private Integer id;
-    
-        @Basic
-        @Column(name = "name")
-        private String name;
-    
-        @Basic
-        @Column(name = "description")
-        private String description;
-    
-        @Basic
-        @Column(name = "price")
-        private float price;
-    
-        @Basic
-        @Column(name = "rating")
-        private float rating;
-    
-        @Basic
-        @Column(name = "category")
-        private CategoryEnum category;
-    
-        @Basic
-        @Column(name = "store_id")
-        private int storeId;
-    
-        @Basic
-        @Column(name = "inventory")
-        private int inventory;
-        public ItemVO toVO(){
-            ItemVO itemVO = new ItemVO();
-            itemVO.setId(this.id);
-            itemVO.setName(this.name);
-            itemVO.setDescription(this.description);
-            itemVO.setPrice(this.price);
-            itemVO.setRating(this.rating);
-            itemVO.setCategory(this.category);
-            itemVO.setStoreId(this.storeId);
-            itemVO.setInventory(this.inventory);
-            return itemVO;
-        }
-    }
-    ```
-    
-- InviteCodePO类包含了邀请码的id、值、被邀请者角色。定义如下
+- InviteCodePO类包含了邀请码的id、值、被邀请者角色。
   
-    ```java
-    public class InviteCode {
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Id
-        @Column(name = "id")
-        private Integer id;
-    
-        @Basic
-        @Column(name = "code")
-        private String code;
-    
-        @Basic
-        @Column(name = "role")
-        @Enumerated(EnumType.STRING)
-        private RoleEnum role;
-    
-    }
-    ```
-    
-- CommentPO类包含了评价的id、内容、被评价商品id、评价者id、订单id、商品评分、评价创建时间。定义如下：
+- CommentPO类包含了评价的id、内容、被评价商品id、评价者id、订单id、商品评分、评价创建时间。
   
-    ```java
-    public class Comment {
-    
-        @GeneratedValue(strategy =  GenerationType.IDENTITY)
-        @Id
-        @Column(name = "id")
-        private Integer id;
-    
-        @Basic
-        @Column(name ="content" )
-        private String content;
-    
-        @Basic
-        @Column(name = "itemId")
-        private Integer itemId;
-    
-        @Basic
-        @Column(name = "userId")
-        private Integer userId;
-    
-        @Basic
-        @Column(name = "orderId")
-        private Integer orderId;
-    
-        @Basic
-        @Column(name = "rating")
-        private float rating;
-    
-        @Basic
-        @Column(name = "createTime")
-        private Date createTime;
-    
-        public CommentVO toVO(){
-            CommentVO commentVO = new CommentVO();
-            commentVO.setId(this.id);
-            commentVO.setContent(this.content);
-            commentVO.setUserId(this.userId);
-            commentVO.setOrderId(this.orderId);
-            commentVO.setItemId(this.itemId);
-            commentVO.setRating(this.rating);
-            commentVO.setCreateTime(this.createTime);
-            return commentVO;
-    
-        }
-    ```
-    
-- ImagePO类包含了图片的id、url、类型、所属父辈id、排序。定义如下：
-  
-    ```java
-    public class Image {
-    
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Id
-        @Column(name = "id")
-        private Integer id;
-    
-        @Basic
-        @Column(name = "url")
-        private String url;
-    
-        @Basic
-        @Column(name = "type")
-        @Enumerated(EnumType.STRING)
-        private ImageType type;
-    
-        @Basic
-        @Column(name = "parent_id")
-        private Integer parentId;
-    
-        @Basic
-        @Column(name = "ind")
-        private Integer ind;
-    
-        public ImageVO toVO(){
-            ImageVO imageVO = new ImageVO();
-            imageVO.setId(this.id);
-            imageVO.setUrl(this.url);
-            imageVO.setParentId(this.parentId);
-            imageVO.setInd(this.ind);
-            return imageVO;
-        }
-    
-    }
-    ```
-    
+- ImagePO类包含了图片的id、url、类型、所属父辈id、排序。
+- 以及CouponPO、CouponGroupPo
 
 ### **6.2 数据库表**
 
-数据库中包含User表、Store表、Item表、Order表、Comment表、InviteCode表、Image表。
+| Table名称    | 名称       | 对应PO        |
+| ------------ | ---------- | ------------- |
+| Comment      | 评价表     | CommentPO     |
+| Coupon       | 优惠券表   | CouponPO      |
+| Coupon_group | 优惠券组表 | CouponGroupPO |
+| Image        | 图像表     | ImagePO       |
+| Invite_code  | 邀请码表   | InviteCodePO  |
+| Item         | 商品表     | ItemPO        |
+| Order        | 订单表     | OrderPO       |
+| Store        | 商店信息表 | StorePO       |
+| User         | 用户信息表 | UserPO        |
+
